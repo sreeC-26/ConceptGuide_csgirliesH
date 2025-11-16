@@ -9,7 +9,7 @@ export default function Congratulations({ onComplete }) {
       if (onComplete) {
         onComplete();
       }
-    }, 3000); // Show for 3 seconds then redirect
+    }, 3000); 
 
     return () => clearTimeout(timer);
   }, []);
