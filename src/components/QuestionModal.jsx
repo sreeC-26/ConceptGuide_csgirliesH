@@ -1,0 +1,305 @@
+import { useState, useEffect } from 'react';
+import { useAppStore } from '../store/useAppStore';
+import VoiceRecorder from './VoiceRecorder';
+
+const SAMPLE_QUESTIONS = [
+  {
+    level: 1,
+    type: "Vocabulary/Definition",
+    question: "What does the main concept mean in your own words?",
+    expectedKeywords: []
+  },
+  {
+    level: 2,
+    type: "Purpose/Motivation",
+    question: "Why would we need to understand this concept?",
+    expectedKeywords: []
+  },
+  {
+    level: 3,
+    type: "Foundation/Prerequisites",
+    question: "What other concepts do you need to know first?",
+    expectedKeywords: []
+  },
+  {
+    level: 4,
+    type: "Misconception Check",
+    question: "How is this different from related concepts?",
+    expectedKeywords: []
+  },
+  {
+    level: 5,
+    type: "Application/Real-world",
+    question: "Can you explain how this would work in a new scenario?",
+    expectedKeywords: []
+  }
+];
+
+export default function QuestionModal() {
+  const {
+    questions,
+    currentQuestionIndex,
+    answers,
+    showQuestionModal,
+    setQuestions,
+    setCurrentQuestionIndex,
+    setAnswer,
+    setShowQuestionModal,
+    selectedText,
+    currentSessionId,
+    history,
+  } = useAppStore();
+
+  const [currentAnswer, setCurrentAnswer] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load questions when modal opens
+  useEffect(() => {
+    if (showQuestionModal && questions.length === 0) {
+      loadQuestions();
+    }
+  }, [showQuestionModal]);
+
+  // Initialize current answer from store
+  useEffect(() => {
+    if (answers[currentQuestionIndex]) {
+      setCurrentAnswer(answers[currentQuestionIndex]);
+    } else {
+      setCurrentAnswer('');
+    }
+  }, [currentQuestionIndex, answers]);
+
+  const loadQuestions = async () => {
+    setIsLoading(true);
+    try {
+      const { fullText } = useAppStore.getState();
+      const response = await fetch('http://localhost:3001/api/generate-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          selectedText,
+          fullPdfText: fullText,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate questions');
+      }
+      
+      const data = await response.json();
+      // Handle structured questions with levels
+      const questionsArray = Array.isArray(data.questions) ? data.questions : [];
+      const finalQuestions = questionsArray.slice(0, 5).map((q, idx) => {
+        // If it's already structured, use it
+        if (q && typeof q === 'object' && q.question) {
+          return q;
+        }
+        // Fallback for simple string questions
+        return {
+          level: idx + 1,
+          type: ['Vocabulary', 'Purpose', 'Foundation', 'Misconception', 'Application'][idx],
+          question: typeof q === 'string' ? q : `Question ${idx + 1}: Can you explain this in your own words?`,
+          expectedKeywords: []
+        };
+      });
+      // Pad if less than 5
+      while (finalQuestions.length < 5) {
+        const idx = finalQuestions.length;
+        finalQuestions.push({
+          level: idx + 1,
+          type: ['Vocabulary', 'Purpose', 'Foundation', 'Misconception', 'Application'][idx],
+          question: `Question ${idx + 1}: Can you explain this in your own words?`,
+          expectedKeywords: []
+        });
+      }
+      setQuestions(finalQuestions);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      // Fallback to sample questions
+      setQuestions(SAMPLE_QUESTIONS);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleNext = () => {
+    setAnswer(currentQuestionIndex, currentAnswer);
+    
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      // All questions answered
+      handleSubmit();
+    }
+  };
+
+  const handlePrevious = () => {
+    setAnswer(currentQuestionIndex, currentAnswer);
+    
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
+  const handleSubmit = () => {
+    setAnswer(currentQuestionIndex, currentAnswer);
+
+    const storeState = useAppStore.getState();
+    const updatedQuestions = storeState.questions || [];
+    const updatedAnswers = storeState.answers || [];
+
+    const responses = updatedQuestions.map((questionObj, idx) => {
+      const questionText = typeof questionObj === 'string'
+        ? questionObj
+        : (questionObj?.question || '');
+      const level = typeof questionObj === 'object' && questionObj !== null && typeof questionObj.level === 'number'
+        ? questionObj.level
+        : idx + 1;
+      return {
+        question: questionText,
+        answer: updatedAnswers[idx] || '',
+        level,
+      };
+    });
+
+    if (storeState.currentSessionId && storeState.history?.updateSessionProgress) {
+      storeState.history.updateSessionProgress(
+        storeState.currentSessionId,
+        undefined,
+        undefined,
+        { questionResponses: responses }
+      );
+    }
+
+    storeState.setQAData({
+      questions: updatedQuestions,
+      answers: updatedAnswers,
+    });
+    
+    setShowQuestionModal(false);
+  };
+
+  const handleTranscription = (transcribedText) => {
+    setCurrentAnswer(transcribedText);
+  };
+
+  if (!showQuestionModal) return null;
+
+  const currentQuestionObj = questions[currentQuestionIndex] || {};
+  const currentQuestion = typeof currentQuestionObj === 'string' 
+    ? currentQuestionObj 
+    : (currentQuestionObj.question || '');
+  const questionType = currentQuestionObj.type || '';
+  const questionLevel = currentQuestionObj.level || currentQuestionIndex + 1;
+  const progress = questions.length > 0 ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-300 gradient-border rounded-lg">
+        {/* Header */}
+        <div className="p-6" style={{ borderBottom: '1px solid #FF4081' }}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="window-controls" style={{ marginBottom: 0 }}>
+                <div className="window-dot window-dot-red"></div>
+                <div className="window-dot window-dot-yellow"></div>
+                <div className="window-dot window-dot-green"></div>
+              </div>
+              <h2 className="text-2xl" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>🎯 Question Ladder</h2>
+            </div>
+            <button
+              onClick={() => setShowQuestionModal(false)}
+              className="transition-colors duration-200 rounded-full p-1"
+              style={{ color: '#FF4081' }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          {/* Progress Bar */}
+          <div className="w-full rounded-full h-3" style={{ backgroundColor: '#1A1A1A' }}>
+            <div
+              className="h-3 rounded-full transition-all duration-300"
+              style={{ 
+                width: `${progress}%`,
+                background: 'linear-gradient(135deg, #FF4081 0%, #E0007A 100%)'
+              }}
+            />
+          </div>
+          <p className="text-sm mt-2" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081', fontSize: '1.125rem' }}>
+            Question {currentQuestionIndex + 1} of 5
+          </p>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6" style={{ backgroundColor: '#2D2D2D' }}>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#FF4081' }}></div>
+            </div>
+          ) : (
+            <>
+              {questionType && (
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: '#1A1A1A', color: '#FF4081' }}>
+                    Level {questionLevel}
+                  </span>
+                  <span className="text-xs" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{questionType}</span>
+                </div>
+              )}
+              <h3 className="text-lg mb-4 px-4 py-3 rounded-lg" style={{ 
+                fontFamily: 'Poppins, sans-serif', 
+                color: '#FFFFFF', 
+                backgroundColor: '#1A1A1A', 
+                borderLeft: '4px solid #FF4081',
+                fontSize: '1.5rem'
+              }}>
+                {currentQuestion}
+              </h3>
+              
+              <div className="space-y-4">
+                <textarea
+                  value={currentAnswer}
+                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  placeholder="Type your answer here..."
+                  className="w-full h-32 p-4 rounded-lg resize-none transition-all duration-200"
+                  style={{
+                    fontFamily: 'Poppins, sans-serif',
+                    color: '#F5D9E4',
+                    backgroundColor: '#1A1A1A',
+                    border: '1px solid #FF4081',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#E0007A'}
+                  onBlur={(e) => e.target.style.borderColor = '#FF4081'}
+                />
+                
+                <VoiceRecorder onTranscription={handleTranscription} />
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 flex justify-between" style={{ borderTop: '1px solid #FF4081', backgroundColor: '#2D2D2D' }}>
+          <button
+            onClick={handlePrevious}
+            disabled={currentQuestionIndex === 0}
+            className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          
+          <button
+            onClick={handleNext}
+            className="btn-primary"
+          >
+            {currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
