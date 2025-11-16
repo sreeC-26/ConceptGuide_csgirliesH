@@ -5,13 +5,16 @@ import RepairPath from './RepairPath';
 import Congratulations from './Congratulations';
 import { useAppStore } from '../store/useAppStore';
 
+
 export default function LearningExperience({ sessionData, sessionId }) {
+
 
   const hasPersistedAnalysisRef = useRef(false);
   const hasPersistedMindMapRef = useRef(false);
   const hasPersistedCompletionRef = useRef(false);
   const analyzedSessionIdRef = useRef(null);
   const { history, reviewMode, reviewAnalysis } = useAppStore();
+
 
   // Initialize analyzing state - false if we have existing analysis or are in review mode
   const [analyzing, setAnalyzing] = useState(() => {
@@ -30,112 +33,107 @@ export default function LearningExperience({ sessionData, sessionId }) {
   const [error, setError] = useState(null);
   const [showCongratulations, setShowCongratulations] = useState(false);
 
+
   useEffect(() => {
     // FIRST: Check if we have analysis result already (from state, store, or history) - restore immediately
     if (sessionId) {
       const session = history?.getSessionById?.(sessionId);
-      
+     
       // Priority 1: If we have analysisResult in component state, use it directly
       if (analysisResult) {
         setAnalyzing(false);
         analyzedSessionIdRef.current = sessionId;
-        
+       
         // Restore showing state based on progress
         if (session?.completedSteps !== undefined && session?.totalSteps) {
-          if (session.completedSteps < session.totalSteps && analysisResult.repairPath && analysisResult.repairPath.length > 0) {
-            // In middle of learning path - show it directly
-            setShowingMap(false);
-
-          } else if (session.completedSteps >= session.totalSteps) {
+          if (session.completedSteps >= session.totalSteps) {
             // Completed - show congratulations
             setShowingMap(false);
-
             setShowCongratulations(true);
-          } else if (analysisResult.mindMap) {
-            // Show map if path not started
+          } else if (session.completedSteps > 0 && analysisResult.repairPath && analysisResult.repairPath.length > 0) {
+            // In middle of learning path - show it directly
+            setShowingMap(false);
+          } else if (analysisResult.mindMap && analysisResult.mindMap.nodes && analysisResult.mindMap.nodes.length > 0) {
+            // Show map if path not started yet
             setShowingMap(true);
-
+          } else {
+            // No mindMap, show repairPath if available
+            setShowingMap(false);
           }
-        } else if (analysisResult.repairPath && analysisResult.repairPath.length > 0) {
-          // Has repair path - show it
-          setShowingMap(false);
-
-        } else if (analysisResult.mindMap) {
-          // Has mind map - show it
+        } else if (analysisResult.mindMap && analysisResult.mindMap.nodes && analysisResult.mindMap.nodes.length > 0) {
+          // Has mind map - show it first
           setShowingMap(true);
-
+        } else if (analysisResult.repairPath && analysisResult.repairPath.length > 0) {
+          // No mindMap, has repair path - show it
+          setShowingMap(false);
         }
         return;
       }
-      
+     
       // Priority 2: If we have reviewAnalysis in store for current session (not review mode), use it
       if (reviewAnalysis && !reviewMode && sessionId === useAppStore.getState().currentSessionId) {
         setAnalyzing(false);
         setAnalysisResult(reviewAnalysis);
         analyzedSessionIdRef.current = sessionId;
-        
+       
         // Restore showing state based on progress
         if (session?.completedSteps !== undefined && session?.totalSteps) {
-          if (session.completedSteps < session.totalSteps && reviewAnalysis.repairPath && reviewAnalysis.repairPath.length > 0) {
-            // In middle of learning path - show it directly
-            setShowingMap(false);
-
-          } else if (session.completedSteps >= session.totalSteps) {
+          if (session.completedSteps >= session.totalSteps) {
             // Completed - show congratulations
             setShowingMap(false);
-
             setShowCongratulations(true);
-          } else if (reviewAnalysis.mindMap) {
-            // Show map if path not started
+          } else if (session.completedSteps > 0 && reviewAnalysis.repairPath && reviewAnalysis.repairPath.length > 0) {
+            // In middle of learning path - show it directly
+            setShowingMap(false);
+          } else if (reviewAnalysis.mindMap && reviewAnalysis.mindMap.nodes && reviewAnalysis.mindMap.nodes.length > 0) {
+            // Show map if path not started yet
             setShowingMap(true);
-
+          } else {
+            // No mindMap, show repairPath if available
+            setShowingMap(false);
           }
-        } else if (reviewAnalysis.repairPath && reviewAnalysis.repairPath.length > 0) {
-          // Has repair path - show it
-          setShowingMap(false);
-
-        } else if (reviewAnalysis.mindMap) {
-          // Has mind map - show it
+        } else if (reviewAnalysis.mindMap && reviewAnalysis.mindMap.nodes && reviewAnalysis.mindMap.nodes.length > 0) {
+          // Has mind map - show it first
           setShowingMap(true);
-
+        } else if (reviewAnalysis.repairPath && reviewAnalysis.repairPath.length > 0) {
+          // No mindMap, has repair path - show it
+          setShowingMap(false);
         }
         return;
       }
-      
+     
       // Priority 3: If we don't have analysisResult but have it in session history, restore it
       if (session?.analysisResult) {
         setAnalyzing(false);
         setAnalysisResult(session.analysisResult);
         analyzedSessionIdRef.current = sessionId;
-        
+       
         // Restore showing state based on progress
         if (session.completedSteps !== undefined && session.totalSteps) {
-          if (session.completedSteps < session.totalSteps && session.analysisResult.repairPath && session.analysisResult.repairPath.length > 0) {
-            // In middle of learning path - show it directly
-            setShowingMap(false);
-
-          } else if (session.completedSteps >= session.totalSteps) {
+          if (session.completedSteps >= session.totalSteps) {
             // Completed - show congratulations
             setShowingMap(false);
-
             setShowCongratulations(true);
-          } else if (session.analysisResult.mindMap) {
-            // Show map if path not started
+          } else if (session.completedSteps > 0 && session.analysisResult.repairPath && session.analysisResult.repairPath.length > 0) {
+            // In middle of learning path - show it directly
+            setShowingMap(false);
+          } else if (session.analysisResult.mindMap && session.analysisResult.mindMap.nodes && session.analysisResult.mindMap.nodes.length > 0) {
+            // Show map if path not started yet
             setShowingMap(true);
-
+          } else {
+            // No mindMap, show repairPath if available
+            setShowingMap(false);
           }
-        } else if (session.analysisResult.repairPath && session.analysisResult.repairPath.length > 0) {
-          // Has repair path - show it
-          setShowingMap(false);
-
-        } else if (session.analysisResult.mindMap) {
-          // Has mind map - show it
+        } else if (session.analysisResult.mindMap && session.analysisResult.mindMap.nodes && session.analysisResult.mindMap.nodes.length > 0) {
+          // Has mind map - show it first
           setShowingMap(true);
-
+        } else if (session.analysisResult.repairPath && session.analysisResult.repairPath.length > 0) {
+          // No mindMap, has repair path - show it
+          setShowingMap(false);
         }
         return;
       }
-      
+     
       // If already analyzed for this session, skip
       if (analyzedSessionIdRef.current === sessionId) {
         setAnalyzing(false);
@@ -143,36 +141,36 @@ export default function LearningExperience({ sessionData, sessionId }) {
       }
     }
 
+
     // SECOND: Handle review mode (when reviewing an old session)
     if (reviewMode && reviewAnalysis) {
       setAnalyzing(false);
       setError(null);
       setAnalysisResult(reviewAnalysis);
-      
+     
       // Determine what to show based on stored progress
       const session = history?.getSessionById?.(sessionId);
       if (session?.completedSteps !== undefined && session?.totalSteps) {
-        if (session.completedSteps < session.totalSteps && reviewAnalysis.repairPath && reviewAnalysis.repairPath.length > 0) {
-          // Show learning path if not completed - go directly to where they left off
-          setShowingMap(false);
-
-        } else if (session.completedSteps >= session.totalSteps) {
+        if (session.completedSteps >= session.totalSteps) {
           // All completed - show congratulations
           setShowingMap(false);
-
           setShowCongratulations(true);
-        } else if (reviewAnalysis.mindMap) {
+        } else if (session.completedSteps > 0 && reviewAnalysis.repairPath && reviewAnalysis.repairPath.length > 0) {
+          // Show learning path if not completed - go directly to where they left off
+          setShowingMap(false);
+        } else if (reviewAnalysis.mindMap && reviewAnalysis.mindMap.nodes && reviewAnalysis.mindMap.nodes.length > 0) {
           // Show map if path not started yet
           setShowingMap(true);
-
+        } else {
+          // No mindMap, show repairPath if available
+          setShowingMap(false);
         }
+      } else if (reviewAnalysis.mindMap && reviewAnalysis.mindMap.nodes && reviewAnalysis.mindMap.nodes.length > 0) {
+        // Has mind map - show it first
+        setShowingMap(true);
       } else if (reviewAnalysis.repairPath && reviewAnalysis.repairPath.length > 0) {
-        // Has repair path - show it directly
+        // No mindMap, has repair path - show it
         setShowingMap(false);
-
-      } else if (reviewAnalysis.mindMap) {
-        // Has mind map - show it
-
       }
       hasPersistedAnalysisRef.current = true;
       hasPersistedMindMapRef.current = true;
@@ -180,18 +178,22 @@ export default function LearningExperience({ sessionData, sessionId }) {
       return;
     }
 
+
     // Don't analyze if we don't have sessionData
     if (!sessionData || !sessionData.qaPairs || sessionData.qaPairs.length === 0) {
       setAnalyzing(false);
       return;
     }
 
+
     let cancelled = false;
+
 
     const fetchAnalysis = async () => {
       try {
         setAnalyzing(true);
         setError(null);
+
 
         const response = await fetch('http://localhost:3001/api/analyze-and-generate-path', {
           method: 'POST',
@@ -200,6 +202,7 @@ export default function LearningExperience({ sessionData, sessionId }) {
           },
           body: JSON.stringify(sessionData),
         });
+
 
         if (!response.ok) {
           let errorMessage = `Analysis failed: ${response.statusText}`;
@@ -215,19 +218,25 @@ export default function LearningExperience({ sessionData, sessionId }) {
           throw new Error(errorMessage);
         }
 
+
         const data = await response.json();
         if (!cancelled) {
           setAnalysisResult(data);
           setAnalyzing(false);
-          // If a mind map exists, show it. Otherwise, we'll fall through to the path.
-          setShowingMap(!!data.mindMap); 
+          // If a mind map exists with nodes, show it first. User will click "Continue to Learning Path" to proceed.
+          // Only show repairPath directly if there's no mindMap or mindMap has no nodes.
+          if (data.mindMap && data.mindMap.nodes && data.mindMap.nodes.length > 0) {
+            setShowingMap(true);
+          } else {
+            setShowingMap(false);
+          }
           analyzedSessionIdRef.current = sessionId;
-          
+         
           // Store analysis result in store for quick access (for current session only)
           if (sessionId === useAppStore.getState().currentSessionId && !reviewMode) {
             useAppStore.getState().setReviewAnalysis(data);
           }
-          
+         
           // Store analysis result in history if we have a sessionId
           if (sessionId && history?.updateSessionProgress) {
             history.updateSessionProgress(sessionId, undefined, undefined, {
@@ -253,20 +262,25 @@ export default function LearningExperience({ sessionData, sessionId }) {
       }
     };
 
+
     fetchAnalysis();
+
 
     return () => {
       cancelled = true;
     };
   }, [sessionData, reviewMode, reviewAnalysis, sessionId, history]);
 
+
   const handleMapComplete = () => {
     setShowingMap(false);
   };
 
+
   const handlePathComplete = () => {
     // Learning path completed - show congratulations
     setShowCongratulations(true);
+
 
     if (!hasPersistedCompletionRef.current && history?.updateSessionProgress && sessionId && analysisResult?.repairPath) {
       const totalSteps = analysisResult.repairPath.length;
@@ -287,13 +301,14 @@ export default function LearningExperience({ sessionData, sessionId }) {
         secondaryTypes: analysisResult.secondaryTypes || [],
       });
       hasPersistedCompletionRef.current = true;
-      
+     
       // Refresh history to show the updated session
       if (history?.refreshInsightsTimestamp !== undefined) {
         useAppStore.getState().setRefreshInsightsTimestamp(Date.now());
       }
     }
   };
+
 
   const handleCongratulationsComplete = () => {
     // Reset to home screen
@@ -302,6 +317,7 @@ export default function LearningExperience({ sessionData, sessionId }) {
     // Reload page to return to home
     window.location.reload();
   };
+
 
   if (analyzing) {
     return (
@@ -319,6 +335,7 @@ export default function LearningExperience({ sessionData, sessionId }) {
       </div>
     );
   }
+
 
   if (error) {
     return (
@@ -343,9 +360,11 @@ export default function LearningExperience({ sessionData, sessionId }) {
     );
   }
 
+
   if (showCongratulations) {
     return <Congratulations onComplete={handleCongratulationsComplete} />;
   }
+
 
   // Show analyzing state only if we're actually analyzing
   // Don't show it if we're in review mode or have existing analysis
@@ -366,17 +385,20 @@ export default function LearningExperience({ sessionData, sessionId }) {
     );
   }
 
+
   // If we have reviewAnalysis but no analysisResult yet, wait for useEffect to set it
   if (!analysisResult && !reviewMode && !reviewAnalysis && !analyzing) {
     return null;
   }
 
+
   // Use reviewAnalysis if available, otherwise use analysisResult
   const displayResult = reviewAnalysis || analysisResult;
-  
+ 
   if (!displayResult) {
     return null;
   }
+
 
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: '#1A1A1A' }}>
@@ -384,8 +406,9 @@ export default function LearningExperience({ sessionData, sessionId }) {
         {/* Diagnostic Summary - Always shown first */}
         <DiagnosticSummary analysisResult={displayResult} />
 
-        {/* Dependency Graph - Renders ONLY if showingMap is true AND a mindMap exists */}
-{showingMap && displayResult.mindMap && (
+
+        {/* Dependency Graph - Renders ONLY if showingMap is true AND a mindMap exists with nodes */}
+{showingMap && displayResult.mindMap && displayResult.mindMap.nodes && displayResult.mindMap.nodes.length > 0 && (
   <div className="mt-8">
     <DependencyGraph
       mindMap={displayResult.mindMap}
@@ -393,6 +416,7 @@ export default function LearningExperience({ sessionData, sessionId }) {
     />
   </div>
 )}
+
 
 {/* Repair Path - Renders ONLY if showingMap is false AND a repairPath exists */}
 {!showingMap && displayResult.repairPath && (
@@ -408,3 +432,6 @@ export default function LearningExperience({ sessionData, sessionId }) {
     </div>
   );
 }
+
+
+
