@@ -105,7 +105,7 @@ export default function PDFUpload() {
           />
         </svg>
         <h3 className="text-3xl mb-2" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>
-          📄 Upload a PDF document
+          Upload a PDF document
         </h3>
         <p className="mb-6 text-sm" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>
           Drag and drop your PDF here, or click to browse
