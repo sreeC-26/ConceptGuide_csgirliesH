@@ -19,7 +19,7 @@ export default function AnalyticsPage() {
   useEffect(() => {
     const allSessions = history?.getAllSessions?.() || [];
     
-    // Filter sessions that have some analysis data
+    // Only include sessions that have completed analysis
     const completeSessions = allSessions.filter(s => 
       s.analysisComplete === true || 
       s.analysisResult != null ||
@@ -41,10 +41,9 @@ export default function AnalyticsPage() {
       ? Math.round(sessions.reduce((sum, s) => sum + (s.masteryScore || 0), 0) / totalSessions)
       : 0;
 
-    // Calculate streak
     const streak = calculateStreak(sessions);
 
-    // Confusion type breakdown - exclude Unknown
+    // Count sessions by confusion type, excluding "Unknown"
     const confusionBreakdown = {};
     sessions.forEach(s => {
       if (s.confusionType && 
@@ -118,7 +117,7 @@ export default function AnalyticsPage() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-400 mb-1 sm:mb-2">📊 Learning Analytics</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-400 mb-1 sm:mb-2">Learning Analytics</h1>
               <p className="text-gray-400 text-sm sm:text-base">Track your progress and identify patterns</p>
             </div>
             <button
@@ -132,26 +131,26 @@ export default function AnalyticsPage() {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
             <StatCard
-              icon="📚"
+              icon=""
               title="Completed Sessions"
               value={stats.totalSessions}
               subtitle="With full analysis"
               color="pink"
             />
             <StatCard
-              icon="✅"
+              icon=""
               title="Steps Completed"
               value={stats.totalSteps}
               color="green"
             />
             <StatCard
-              icon="🎯"
+              icon=""
               title="Average Mastery"
               value={`${stats.avgMastery}%`}
               color="blue"
             />
             <StatCard
-              icon="⏱️"
+              icon=""
               title="Total Time"
               value={formatTime(stats.totalTime)}
               color="purple"
@@ -160,7 +159,7 @@ export default function AnalyticsPage() {
 
           {/* Streak */}
           <div className="bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 border border-pink-500 mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-pink-400 mb-3 sm:mb-4">🔥 Study Streak</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-pink-400 mb-3 sm:mb-4">Study Streak</h2>
             <div className="flex items-center gap-4 sm:gap-6">
               <div className="text-4xl sm:text-5xl md:text-7xl font-bold text-pink-400">
                 {stats.streak}
@@ -176,7 +175,7 @@ export default function AnalyticsPage() {
           <div className="flex-1 flex flex-col min-h-0">
           {Object.keys(stats.confusionBreakdown).length > 0 ? (
             <div className="bg-gray-800 rounded-lg p-4 sm:p-6 border border-pink-500 flex-1 flex flex-col">
-              <h2 className="text-xl sm:text-2xl font-bold text-pink-400 mb-4 sm:mb-6 flex-shrink-0">📊 Confusion Type Breakdown</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-pink-400 mb-4 sm:mb-6 flex-shrink-0">Confusion Type Breakdown</h2>
               <div className="space-y-3 sm:space-y-4 flex-1 overflow-y-auto">
                 {Object.entries(stats.confusionBreakdown)
                   .sort((a, b) => b[1] - a[1])
@@ -204,7 +203,6 @@ export default function AnalyticsPage() {
           ) : (
             <div className="bg-gray-800 rounded-lg p-6 sm:p-8 border border-pink-500 text-center flex-1 flex items-center justify-center">
               <div>
-                <div className="text-3xl sm:text-4xl mb-4">📊</div>
                 <h3 className="text-lg sm:text-xl font-semibold text-pink-400 mb-2">No Analytics Yet</h3>
                 <p className="text-gray-400 text-sm sm:text-base">Complete your first learning session to see analytics!</p>
               </div>
@@ -229,7 +227,7 @@ function StatCard({ icon, title, value, subtitle, color }) {
   return (
     <div className={`bg-gray-800 rounded-lg p-3 sm:p-4 md:p-6 border-2 ${colorClasses[color]}`}>
       <div className="flex items-center justify-between mb-2 sm:mb-3">
-        <span className="text-xl sm:text-2xl md:text-3xl">{icon}</span>
+        {icon && <span className="text-xl sm:text-2xl md:text-3xl">{icon}</span>}
         <div className="text-xl sm:text-2xl md:text-4xl font-bold text-pink-400">{value}</div>
       </div>
       <div className="text-xs sm:text-sm text-gray-400">{title}</div>

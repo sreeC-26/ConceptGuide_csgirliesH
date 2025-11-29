@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { GOAL_TYPES, GOAL_PERIODS } from '../store/useGoalsStore';
 
 const goalTypeIcons = {
-  [GOAL_TYPES.SESSIONS]: '📚',
-  [GOAL_TYPES.TIME]: '⏱️',
-  [GOAL_TYPES.MASTERY]: '🎯',
-  [GOAL_TYPES.STREAK]: '🔥',
+  [GOAL_TYPES.SESSIONS]: '',
+  [GOAL_TYPES.TIME]: '',
+  [GOAL_TYPES.MASTERY]: '',
+  [GOAL_TYPES.STREAK]: '',
 };
 
 const goalTypeLabels = {
@@ -46,8 +46,8 @@ export default function GoalCard({ goal, onToggle, onDelete }) {
     }
     if (progress?.daysRemaining <= 1) {
       return (
-        <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse">
-          ⚠️ Ending Soon
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse">
+          Ending Soon
         </span>
       );
     }
@@ -156,7 +156,7 @@ export default function GoalCard({ goal, onToggle, onDelete }) {
               : 'bg-pink-500/20 hover:bg-pink-500/30 text-pink-400'
           }`}
         >
-          {goal.isActive ? '⏸️ Pause' : '▶️ Resume'}
+          {goal.isActive ? 'Pause' : 'Resume'}
         </button>
         <button
           onClick={handleDelete}
@@ -166,14 +166,13 @@ export default function GoalCard({ goal, onToggle, onDelete }) {
               : 'bg-gray-700 hover:bg-red-500/20 text-gray-300 hover:text-red-400'
           }`}
         >
-          {showConfirmDelete ? 'Confirm?' : '🗑️'}
+          {showConfirmDelete ? 'Confirm?' : 'Delete'}
         </button>
       </div>
 
       {/* Completion Animation */}
       {isCompleted && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
-          <div className="absolute -top-2 -right-2 text-4xl animate-bounce">🎉</div>
         </div>
       )}
     </div>

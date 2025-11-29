@@ -13,7 +13,6 @@ export default function DiagnosticSummary({ analysisResult }) {
         <div className="window-dot window-dot-green"></div>
       </div>
       <h2 className="text-xl sm:text-2xl mb-3 sm:mb-4 flex items-center" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>
-        <span className="mr-2">📊</span>
         Diagnostic Summary
       </h2>
 
@@ -117,7 +116,6 @@ export default function DiagnosticSummary({ analysisResult }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#1A1A1A', border: '1px solid #FF4081' }}>
           <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081' }}>
-            <span className="mr-2">🎯</span>
             Confusion Type
           </h4>
           <p className="mb-2 text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{confusionType}</p>
@@ -131,7 +129,6 @@ export default function DiagnosticSummary({ analysisResult }) {
 
         <div className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#1A1A1A', border: '1px solid #FFBD2E' }}>
           <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFBD2E' }}>
-            <span className="mr-2">⚠️</span>
             Knowledge Gaps
           </h4>
           <ul className="list-none space-y-1 text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>

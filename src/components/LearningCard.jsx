@@ -29,11 +29,11 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
 
   return (
     <div className="rounded-lg p-3 sm:p-4 md:p-6" style={{ backgroundColor: '#1A1A1A', border: '2px solid #FF4081' }}>
-      {/* Why This Step - Very Important Personalization Feature at the Top */}
+      {/* Personalization: Explains why this specific step is important for the user */}
       {step.whyThisStep && (
         <div className="rounded-lg p-3 sm:p-4 mb-3 sm:mb-4" style={{ backgroundColor: '#2D2D2D', border: '2px solid #E0007A' }}>
           <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081' }}>
-            <span className="mr-2">🎯</span>
+            <span className="mr-2"></span>
             Why This Step Matters
           </h4>
           <p className="leading-relaxed font-medium text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.whyThisStep}</p>
@@ -51,7 +51,7 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
             </span>
             {step.timeEstimate && (
               <span className="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium" style={{ backgroundColor: '#2D2D2D', color: '#FFBD2E', fontFamily: 'Poppins, sans-serif' }}>
-                ⏱️ ~{step.timeEstimate} min
+                ~{step.timeEstimate} min
               </span>
             )}
           </div>
@@ -169,7 +169,7 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
         {!isLastStep && step.connectionToNext && (
           <div className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#2D2D2D', border: '2px solid #E0007A' }}>
             <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081' }}>
-              <span className="mr-2">🔗</span>
+              <span className="mr-2"></span>
               What's Next?
             </h4>
             <p className="leading-relaxed font-medium text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.connectionToNext}</p>

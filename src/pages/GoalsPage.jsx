@@ -18,7 +18,7 @@ export default function GoalsPage() {
   const sessions = useAppStore((state) => state.history?.sessions) || [];
   const syncSessionsFromFirebase = useAppStore((state) => state.syncSessionsFromFirebase);
   
-  // Subscribe to goals directly for reactivity
+  // Get goals from Zustand store - component re-renders when goals change
   const goals = useGoalsStore((state) => state.goals);
   const activeReminders = useGoalsStore((state) => state.activeReminders);
   const isLoading = useGoalsStore((state) => state.isLoading);
@@ -36,15 +36,14 @@ export default function GoalsPage() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Fetch goals and sessions when user logs in or page mounts
+  // Load user data when they log in
   useEffect(() => {
     if (user?.uid) {
       console.log('[GoalsPage] User logged in, fetching goals and sessions...');
-      // Force refresh goals from Firebase to ensure we have latest data
       fetchGoals(true);
       syncSessionsFromFirebase();
     }
-  }, [user?.uid]); // Removed fetchGoals and syncSessionsFromFirebase from deps to avoid infinite loops
+  }, [user?.uid]);
 
   // Check reminders when goals or sessions change
   useEffect(() => {
@@ -53,7 +52,7 @@ export default function GoalsPage() {
     }
   }, [goals, sessions, checkReminders]);
 
-  // Compute goals with progress - memoized for performance
+  // Calculate progress for each goal based on current sessions
   const goalsWithProgress = useMemo(() => {
     console.log('[GoalsPage] Computing goals with progress, goals count:', goals.length);
     return goals.map((goal) => ({
@@ -62,7 +61,7 @@ export default function GoalsPage() {
     }));
   }, [goals, sessions]);
 
-  // Calculate overall stats from ALL goals (not just active)
+  // Filter and compute statistics for active goals
   const activeGoals = useMemo(() => 
     goalsWithProgress.filter(g => g.isActive), 
     [goalsWithProgress]
@@ -93,7 +92,6 @@ export default function GoalsPage() {
         <TopNavBar isDesktop={isDesktop} />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center p-8">
-            <div className="text-6xl mb-4">🔐</div>
             <h2 className="text-2xl font-bold text-pink-400 mb-2">Sign In Required</h2>
             <p className="text-gray-400 mb-4">Please sign in to set and track your study goals.</p>
             <button
@@ -124,7 +122,7 @@ export default function GoalsPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-400 mb-1 sm:mb-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                🎯 Study Goals
+                Study Goals
               </h1>
               <p className="text-gray-400 text-sm sm:text-base">Set targets and track your learning progress</p>
             </div>
@@ -187,7 +185,6 @@ export default function GoalsPage() {
             </div>
           ) : goalsWithProgress.length === 0 ? (
             <div className="text-center py-12 bg-gray-800/50 rounded-xl border border-gray-700">
-              <div className="text-6xl mb-4">🎯</div>
               <h3 className="text-xl font-bold text-gray-300 mb-2">No Goals Yet</h3>
               <p className="text-gray-500 mb-4">Create your first study goal to start tracking progress!</p>
               <button
@@ -212,7 +209,7 @@ export default function GoalsPage() {
 
           {/* Quick Tips */}
           <div className="mt-8 p-6 bg-gray-800/50 rounded-xl border border-gray-700">
-            <h3 className="text-lg font-bold text-pink-400 mb-4">💡 Goal Setting Tips</h3>
+            <h3 className="text-lg font-bold text-pink-400 mb-4">Goal Setting Tips</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-400">
               <div className="flex items-start gap-2">
                 <span className="text-green-400">✓</span>

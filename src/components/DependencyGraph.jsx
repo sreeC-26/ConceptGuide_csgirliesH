@@ -28,15 +28,19 @@ function FitViewHelper({ nodes }) {
 }
 
 export default function DependencyGraph({ mindMap, onComplete }) {
+  // Calculate layout parameters
+  const layoutParams = useMemo(() => {
+    if (!mindMap || !mindMap.nodes.length) return { radius: 300, centerX: 800, centerY: 600, nodeCount: 0 };
+    const nodeCount = mindMap.nodes.length;
+    const radius = Math.max(300, nodeCount * 80);
+    return { radius, centerX: 800, centerY: 600, nodeCount };
+  }, [mindMap]);
+
   // Convert mindMap data to ReactFlow format with simple circular layout
   const nodes = useMemo(() => {
     if (!mindMap) return [];
 
-    const nodeCount = mindMap.nodes.length;
-    // Increase radius significantly to prevent overlapping
-    const radius = Math.max(300, nodeCount * 80);
-    const centerX = 600;
-    const centerY = 400;
+    const { radius, centerX, centerY, nodeCount } = layoutParams;
 
     return mindMap.nodes.map((node, index) => {
       // Determine node color based on depth
@@ -97,7 +101,7 @@ export default function DependencyGraph({ mindMap, onComplete }) {
         },
       };
     });
-  }, [mindMap]);
+  }, [mindMap, layoutParams]);
 
   const edges = useMemo(() => {
     if (!mindMap) return [];
@@ -235,16 +239,17 @@ export default function DependencyGraph({ mindMap, onComplete }) {
         )}
       </div>
 
-      <div className="rounded-lg" style={{ height: '600px', width: '100%', border: '1px solid #FF4081', backgroundColor: '#1A1A1A' }}>
-        <ReactFlowProvider>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            fitView
-            fitViewOptions={{ padding: 0.2, maxZoom: 1, minZoom: 0.1 }}
-            attributionPosition="bottom-left"
-          >
+      <div className="rounded-lg" style={{ width: '100%', border: '1px solid #FF4081', backgroundColor: '#1A1A1A' }}>
+        <div style={{ height: `${Math.max(1200, (layoutParams.centerY + layoutParams.radius + 200))}px`, width: '100%' }}>
+          <ReactFlowProvider>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              fitView={false}
+              attributionPosition="bottom-left"
+              style={{ width: '100%', height: '100%' }}
+            >
             <FitViewHelper nodes={nodes} />
             <Background color="#2D2D2D" gap={16} />
             <Controls style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }} />
@@ -260,8 +265,9 @@ export default function DependencyGraph({ mindMap, onComplete }) {
               maskColor="rgba(0, 0, 0, 0.5)"
               style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }}
             />
-          </ReactFlow>
-        </ReactFlowProvider>
+            </ReactFlow>
+          </ReactFlowProvider>
+        </div>
       </div>
     </div>
   );

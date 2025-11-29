@@ -43,14 +43,12 @@ export default function MindMapPage({ mindMap, onBack, onContinueToPath }) {
           <div className="hidden sm:block" style={{ width: '100px' }}></div> {/* Spacer for centering */}
         </div>
 
-        {/* Mind Map - Responsive Display */}
-        <div className="mb-6 sm:mb-8 overflow-x-auto" style={{ minHeight: '300px' }}>
-          <div className="min-w-[300px] sm:min-w-0" style={{ minHeight: '300px', height: 'calc(100vh - 300px)', maxHeight: '600px' }}>
-            <DependencyGraph
-              mindMap={mindMap}
-              onComplete={() => {}} // Don't auto-advance, use button instead
-            />
-          </div>
+        {/* Mind Map - Full size, no internal scrolling */}
+        <div className="mb-6 sm:mb-8">
+          <DependencyGraph
+            mindMap={mindMap}
+            onComplete={() => {}} // Don't auto-advance, use button instead
+          />
         </div>
 
         {/* Continue to Learning Path Button */}

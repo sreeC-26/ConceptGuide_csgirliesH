@@ -28,12 +28,13 @@ export default function TopNavBar({ onHomeClick, onHistoryToggle, isHistoryOpen 
     setMobileMenuOpen(false);
   };
 
+  // Close mobile menu when navigating
   const handleNavClick = () => {
     setMobileMenuOpen(false);
   };
 
-  const showHistoryToggle = !isDesktop && typeof onHistoryToggle === 'function';
 
+  // Style home link differently when Q&A session is active
   const homeLinkStyle = {
     fontFamily: 'Poppins, sans-serif',
     background: qaData ? '#1A1A1A' : 'linear-gradient(135deg, #FF4081 0%, #E0007A 100%)',
@@ -63,22 +64,8 @@ export default function TopNavBar({ onHomeClick, onHistoryToggle, isHistoryOpen 
           borderBottom: '1px solid #FF4081',
         }}
       >
-        {/* Left side - Logo */}
+        {/* Logo and app name */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {showHistoryToggle && (
-            <button
-              onClick={onHistoryToggle}
-              className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-pink-500/40 transition duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:ring-offset-2 focus:ring-offset-[#2D2D2D] ${
-                isHistoryOpen ? 'bg-pink-500/20 text-pink-200' : 'bg-[#1A1A1A] text-pink-300 hover:text-pink-100'
-              }`}
-              aria-label="Toggle history sidebar"
-            >
-              <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5h13M8 12h13M8 19h13M3 5h.01M3 12h.01M3 19h.01" />
-              </svg>
-            </button>
-          )}
-
           <Link
             to="/"
             onClick={handleHome}
@@ -134,7 +121,7 @@ export default function TopNavBar({ onHomeClick, onHistoryToggle, isHistoryOpen 
             className="px-3 lg:px-4 py-2 rounded-lg transition-all duration-200 hover:opacity-80 inline-flex items-center justify-center text-center text-sm lg:text-base"
             style={historyLinkStyle}
           >
-            🎯 Goals
+            Goals
           </Link>
           <Link 
             to="/analytics" 
@@ -198,41 +185,41 @@ export default function TopNavBar({ onHomeClick, onHistoryToggle, isHistoryOpen 
           style={{ backgroundColor: '#2D2D2D' }}
         >
           <div className="flex flex-col p-4 gap-2">
-            <Link
-              to="/"
-              onClick={handleHome}
-              className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
-              style={homeLinkStyle}
-            >
-              🏠 Home
-            </Link>
+          <Link
+            to="/"
+            onClick={handleHome}
+            className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
+            style={homeLinkStyle}
+          >
+            Home
+          </Link>
 
-            <Link
-              to="/history"
-              onClick={handleNavClick}
-              className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
-              style={historyLinkStyle}
-            >
-              📜 History
-            </Link>
-            
-            <Link 
-              to="/goals"
-              onClick={handleNavClick}
-              className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
-              style={historyLinkStyle}
-            >
-              🎯 Goals
-            </Link>
-            
-            <Link 
-              to="/analytics"
-              onClick={handleNavClick}
-              className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
-              style={historyLinkStyle}
-            >
-              📊 Analytics
-            </Link>
+          <Link
+            to="/history"
+            onClick={handleNavClick}
+            className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
+            style={historyLinkStyle}
+          >
+            History
+          </Link>
+          
+          <Link 
+            to="/goals"
+            onClick={handleNavClick}
+            className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
+            style={historyLinkStyle}
+          >
+            Goals
+          </Link>
+          
+          <Link 
+            to="/analytics"
+            onClick={handleNavClick}
+            className="px-4 py-3 rounded-lg transition-all duration-200 hover:opacity-80 text-center"
+            style={historyLinkStyle}
+          >
+            Analytics
+          </Link>
 
             <div className="border-t border-pink-500/30 pt-2 mt-2">
               {user ? (
@@ -246,7 +233,7 @@ export default function TopNavBar({ onHomeClick, onHistoryToggle, isHistoryOpen 
                     border: '1px solid #FF4081',
                   }}
                 >
-                  🚪 Logout
+                  Logout
                 </button>
               ) : (
                 <button
@@ -259,7 +246,7 @@ export default function TopNavBar({ onHomeClick, onHistoryToggle, isHistoryOpen 
                     border: '1px solid #FF4081',
                   }}
                 >
-                  🔐 Sign In
+                  Sign In
                 </button>
               )}
             </div>

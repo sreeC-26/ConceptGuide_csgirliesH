@@ -53,14 +53,14 @@ export default function QuestionModal() {
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load questions when modal opens
+  // Fetch questions from API when modal first opens
   useEffect(() => {
     if (showQuestionModal && questions.length === 0) {
       loadQuestions();
     }
   }, [showQuestionModal]);
 
-  // Initialize current answer from store
+  // Load saved answer when switching between questions
   useEffect(() => {
     if (answers[currentQuestionIndex]) {
       setCurrentAnswer(answers[currentQuestionIndex]);
@@ -87,14 +87,12 @@ export default function QuestionModal() {
       }
       
       const data = await response.json();
-      // Handle structured questions with levels
       const questionsArray = Array.isArray(data.questions) ? data.questions : [];
       const finalQuestions = questionsArray.slice(0, 5).map((q, idx) => {
-        // If it's already structured, use it
         if (q && typeof q === 'object' && q.question) {
           return q;
         }
-        // Fallback for simple string questions
+        // Transform string questions into structured format
         return {
           level: idx + 1,
           type: ['Vocabulary', 'Purpose', 'Foundation', 'Misconception', 'Application'][idx],
@@ -102,7 +100,7 @@ export default function QuestionModal() {
           expectedKeywords: []
         };
       });
-      // Pad if less than 5
+      // Ensure we always have exactly 5 questions
       while (finalQuestions.length < 5) {
         const idx = finalQuestions.length;
         finalQuestions.push({
@@ -115,7 +113,7 @@ export default function QuestionModal() {
       setQuestions(finalQuestions);
     } catch (error) {
       console.error('Error loading questions:', error);
-      // Fallback to sample questions
+      // Use predefined questions if API fails
       setQuestions(SAMPLE_QUESTIONS);
     } finally {
       setIsLoading(false);
@@ -128,7 +126,6 @@ export default function QuestionModal() {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // All questions answered
       handleSubmit();
     }
   };
@@ -205,7 +202,7 @@ export default function QuestionModal() {
                 <div className="window-dot window-dot-yellow"></div>
                 <div className="window-dot window-dot-green"></div>
               </div>
-              <h2 className="text-lg sm:text-2xl" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>🎯 Question Ladder</h2>
+              <h2 className="text-lg sm:text-2xl" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>Question Ladder</h2>
             </div>
             <button
               onClick={() => setShowQuestionModal(false)}

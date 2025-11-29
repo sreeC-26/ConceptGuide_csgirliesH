@@ -23,25 +23,25 @@ export default function NotificationToast({ reminders, onDismiss }) {
         return {
           bg: 'bg-gradient-to-r from-green-500/20 to-emerald-500/20',
           border: 'border-green-500/50',
-          icon: '🎉',
+          icon: '',
         };
       case 'urgent':
         return {
           bg: 'bg-gradient-to-r from-red-500/20 to-orange-500/20',
           border: 'border-red-500/50',
-          icon: '⚠️',
+          icon: '',
         };
       case 'warning':
         return {
           bg: 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20',
           border: 'border-yellow-500/50',
-          icon: '⏰',
+          icon: '',
         };
       default:
         return {
           bg: 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20',
           border: 'border-blue-500/50',
-          icon: '💡',
+          icon: '',
         };
     }
   };
@@ -61,7 +61,7 @@ export default function NotificationToast({ reminders, onDismiss }) {
             }}
           >
             <div className="flex items-start gap-3">
-              <span className="text-2xl">{styles.icon}</span>
+              {styles.icon && <span className="text-2xl">{styles.icon}</span>}
               <div className="flex-1">
                 <div className="font-bold text-white text-sm">{reminder.title}</div>
                 <div className="text-gray-300 text-sm mt-1">{reminder.message}</div>

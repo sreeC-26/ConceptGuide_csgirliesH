@@ -140,7 +140,6 @@ export default function HistoryPanel() {
   const renderEmptyState = () => (
     <div className="flex flex-col items-center justify-center py-16 text-center text-pink-200/80">
       <div className="w-24 h-24 mb-6 rounded-full bg-pink-500/20 flex items-center justify-center">
-        <span className="text-4xl">📚</span>
       </div>
       <h3 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
         No study sessions yet

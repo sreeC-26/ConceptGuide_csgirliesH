@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { GOAL_TYPES, GOAL_PERIODS } from '../store/useGoalsStore';
 
 const goalTypeOptions = [
-  { value: GOAL_TYPES.SESSIONS, label: 'Complete Sessions', icon: '📚', description: 'Track study sessions completed' },
-  { value: GOAL_TYPES.TIME, label: 'Study Time (minutes)', icon: '⏱️', description: 'Track total minutes studied' },
-  { value: GOAL_TYPES.MASTERY, label: 'Average Mastery Score', icon: '🎯', description: 'Maintain mastery above target' },
-  { value: GOAL_TYPES.STREAK, label: 'Study Streak', icon: '🔥', description: 'Study consistently every day' },
+  { value: GOAL_TYPES.SESSIONS, label: 'Complete Sessions', icon: '', description: 'Track study sessions completed' },
+  { value: GOAL_TYPES.TIME, label: 'Study Time (minutes)', icon: '', description: 'Track total minutes studied' },
+  { value: GOAL_TYPES.MASTERY, label: 'Average Mastery Score', icon: '', description: 'Maintain mastery above target' },
+  { value: GOAL_TYPES.STREAK, label: 'Study Streak', icon: '', description: 'Study consistently every day' },
 ];
 
 const periodOptions = [
@@ -77,7 +77,7 @@ export default function CreateGoalModal({ onClose, onCreate }) {
         <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 p-4 sm:p-6 border-b border-pink-500/30 sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              🎯 Create New Goal
+              Create New Goal
             </h2>
             <button
               onClick={onClose}
@@ -279,7 +279,7 @@ export default function CreateGoalModal({ onClose, onCreate }) {
                   onClick={handleCreate}
                   className="flex-1 btn-primary text-sm sm:text-base"
                 >
-                  Create Goal 🎯
+                  Create Goal
                 </button>
               </div>
             </div>
