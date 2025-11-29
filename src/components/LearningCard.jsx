@@ -28,29 +28,29 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
   };
 
   return (
-    <div className="rounded-lg p-6" style={{ backgroundColor: '#1A1A1A', border: '2px solid #FF4081' }}>
+    <div className="rounded-lg p-3 sm:p-4 md:p-6" style={{ backgroundColor: '#1A1A1A', border: '2px solid #FF4081' }}>
       {/* Why This Step - Very Important Personalization Feature at the Top */}
       {step.whyThisStep && (
-        <div className="rounded-lg p-4 mb-4" style={{ backgroundColor: '#2D2D2D', border: '2px solid #E0007A' }}>
-          <h4 className="font-semibold mb-2 flex items-center" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081', fontSize: '1.25rem' }}>
+        <div className="rounded-lg p-3 sm:p-4 mb-3 sm:mb-4" style={{ backgroundColor: '#2D2D2D', border: '2px solid #E0007A' }}>
+          <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081' }}>
             <span className="mr-2">🎯</span>
             Why This Step Matters
           </h4>
-          <p className="leading-relaxed font-medium" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.whyThisStep}</p>
+          <p className="leading-relaxed font-medium text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.whyThisStep}</p>
         </div>
       )}
 
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF', fontSize: '1.75rem' }}>
+      <div className="mb-3 sm:mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+          <h3 className="text-base sm:text-lg md:text-xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>
             Step {step.stepNumber}: {step.conceptName}
           </h3>
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: '#2D2D2D', color: '#FF4081', fontFamily: 'Poppins, sans-serif' }}>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium" style={{ backgroundColor: '#2D2D2D', color: '#FF4081', fontFamily: 'Poppins, sans-serif' }}>
               Concept {step.stepNumber}
             </span>
             {step.timeEstimate && (
-              <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: '#2D2D2D', color: '#FFBD2E', fontFamily: 'Poppins, sans-serif' }}>
+              <span className="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium" style={{ backgroundColor: '#2D2D2D', color: '#FFBD2E', fontFamily: 'Poppins, sans-serif' }}>
                 ⏱️ ~{step.timeEstimate} min
               </span>
             )}
@@ -58,28 +58,28 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Explanation */}
-        <div className="rounded-lg p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }}>
-          <h4 className="font-semibold mb-2 flex items-center" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF', fontSize: '1.25rem' }}>
+        <div className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }}>
+          <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>
             <span className="mr-2">💡</span>
             Explanation
           </h4>
-          <p className="leading-relaxed whitespace-pre-wrap" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.explanation}</p>
+          <p className="leading-relaxed whitespace-pre-wrap text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.explanation}</p>
         </div>
 
         {/* Examples */}
         {step.examples && step.examples.length > 0 && (
-          <div className="rounded-lg p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }}>
-            <h4 className="font-semibold mb-2 flex items-center" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF', fontSize: '1.25rem' }}>
+          <div className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }}>
+            <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>
               <span className="mr-2">📝</span>
               Examples
             </h4>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {step.examples.map((example, index) => (
-                <div key={index} className="rounded-lg p-3" style={{ backgroundColor: '#1A1A1A', borderLeft: '4px solid #FF4081' }}>
-                  <h5 className="font-semibold mb-1" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF', fontSize: '1.125rem' }}>{example.title}</h5>
-                  <p className="text-sm leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{example.content}</p>
+                <div key={index} className="rounded-lg p-2 sm:p-3" style={{ backgroundColor: '#1A1A1A', borderLeft: '4px solid #FF4081' }}>
+                  <h5 className="font-semibold mb-1 text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>{example.title}</h5>
+                  <p className="text-xs sm:text-sm leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{example.content}</p>
                 </div>
               ))}
             </div>
@@ -88,13 +88,13 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
 
         {/* Practice Problem */}
         {step.practiceProblem && (
-          <div className="rounded-lg p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }}>
-            <h4 className="font-semibold mb-2 flex items-center" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF', fontSize: '1.25rem' }}>
+          <div className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #FF4081' }}>
+            <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>
               <span className="mr-2">✏️</span>
               Practice Problem
             </h4>
-            <div className="rounded p-3 mb-3" style={{ backgroundColor: '#1A1A1A', border: '1px solid #FFBD2E' }}>
-              <p className="font-medium" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.practiceProblem.question}</p>
+            <div className="rounded p-2 sm:p-3 mb-3" style={{ backgroundColor: '#1A1A1A', border: '1px solid #FFBD2E' }}>
+              <p className="font-medium text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.practiceProblem.question}</p>
             </div>
 
             {/* Multiple Choice Options */}
@@ -110,7 +110,7 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
                       key={index}
                       onClick={() => !showSolution && handleAnswerSelect(option)}
                       disabled={showSolution}
-                      className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+                      className={`w-full text-left p-2 sm:p-3 rounded-lg border-2 transition-all text-sm sm:text-base ${
                         showSolution && isCorrect
                           ? 'border-green-500'
                           : showResult && !isCorrect
@@ -139,22 +139,22 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
             {!showSolution ? (
               <button
                 onClick={() => setShowSolution(true)}
-                className="px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                className="px-3 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium"
                 style={{ backgroundColor: '#FFBD2E', color: '#1A1A1A', fontFamily: 'Poppins, sans-serif' }}
               >
                 {selectedAnswer ? 'Check Answer' : 'Show Solution'}
               </button>
             ) : (
               <div className="space-y-2">
-                <div className="rounded p-3" style={{ backgroundColor: '#1A3A1A', border: '1px solid #27C93F' }}>
-                  <p style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>
+                <div className="rounded p-2 sm:p-3" style={{ backgroundColor: '#1A3A1A', border: '1px solid #27C93F' }}>
+                  <p className="text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>
                     <span className="font-semibold" style={{ color: '#27C93F' }}>Correct Answer: </span>
                     {step.practiceProblem.correctAnswer}
                   </p>
                 </div>
                 {step.practiceProblem.explanation && (
-                  <div className="rounded p-3" style={{ backgroundColor: '#1A1A3A', border: '1px solid #FF4081' }}>
-                    <p style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>
+                  <div className="rounded p-2 sm:p-3" style={{ backgroundColor: '#1A1A3A', border: '1px solid #FF4081' }}>
+                    <p className="text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>
                       <span className="font-semibold" style={{ color: '#FF4081' }}>Explanation: </span>
                       {step.practiceProblem.explanation}
                     </p>
@@ -167,24 +167,23 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
 
         {/* Connection to Next - Only show if not last step */}
         {!isLastStep && step.connectionToNext && (
-          <div className="rounded-lg p-4" style={{ backgroundColor: '#2D2D2D', border: '2px solid #E0007A' }}>
-            <h4 className="font-semibold mb-2 flex items-center" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081', fontSize: '1.25rem' }}>
+          <div className="rounded-lg p-3 sm:p-4" style={{ backgroundColor: '#2D2D2D', border: '2px solid #E0007A' }}>
+            <h4 className="font-semibold mb-2 flex items-center text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081' }}>
               <span className="mr-2">🔗</span>
               What's Next?
             </h4>
-            <p className="leading-relaxed font-medium" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.connectionToNext}</p>
+            <p className="leading-relaxed font-medium text-sm sm:text-base" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{step.connectionToNext}</p>
           </div>
         )}
 
         {/* Action Button */}
-        <div className="pt-4">
+        <div className="pt-3 sm:pt-4">
           {step.practiceProblem && !showSolution ? (
             <button
               disabled
-              className="w-full px-6 py-3 rounded-lg transition-all font-semibold text-lg opacity-50 cursor-not-allowed"
+              className="w-full px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-all font-semibold text-sm sm:text-base md:text-lg opacity-50 cursor-not-allowed"
               style={{
                 fontFamily: 'Poppins, sans-serif',
-                fontSize: '1.25rem',
                 backgroundColor: '#2D2D2D',
                 color: '#F5D9E4',
                 border: '1px solid #FF4081',
@@ -195,8 +194,8 @@ function LearningCardContent({ step, onMarkComplete, isLastStep, sharedAnswer, o
           ) : (
             <button
               onClick={onMarkComplete}
-              className="w-full px-6 py-3 rounded-lg transition-all font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] btn-primary"
-              style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1.25rem' }}
+              className="w-full px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-all font-semibold text-sm sm:text-base md:text-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] btn-primary"
+              style={{ fontFamily: 'Poppins, sans-serif' }}
             >
               {isLastStep ? 'Complete Learning Path ✓' : 'Mark Complete & Continue →'}
             </button>

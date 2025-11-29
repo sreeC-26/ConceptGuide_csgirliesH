@@ -194,77 +194,76 @@ export default function QuestionModal() {
   const progress = questions.length > 0 ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-300 gradient-border rounded-lg">
+    <div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200 p-2 sm:p-4">
+      <div className="w-full max-w-2xl mx-2 sm:mx-4 max-h-[95vh] sm:max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-300 gradient-border rounded-lg">
         {/* Header */}
-        <div className="p-6" style={{ borderBottom: '1px solid #FF4081' }}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="window-controls" style={{ marginBottom: 0 }}>
+        <div className="p-3 sm:p-6" style={{ borderBottom: '1px solid #FF4081' }}>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="window-controls hidden sm:flex" style={{ marginBottom: 0 }}>
                 <div className="window-dot window-dot-red"></div>
                 <div className="window-dot window-dot-yellow"></div>
                 <div className="window-dot window-dot-green"></div>
               </div>
-              <h2 className="text-2xl" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>🎯 Question Ladder</h2>
+              <h2 className="text-lg sm:text-2xl" style={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>🎯 Question Ladder</h2>
             </div>
             <button
               onClick={() => setShowQuestionModal(false)}
               className="transition-colors duration-200 rounded-full p-1"
               style={{ color: '#FF4081' }}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
           
           {/* Progress Bar */}
-          <div className="w-full rounded-full h-3" style={{ backgroundColor: '#1A1A1A' }}>
+          <div className="w-full rounded-full h-2 sm:h-3" style={{ backgroundColor: '#1A1A1A' }}>
             <div
-              className="h-3 rounded-full transition-all duration-300"
+              className="h-2 sm:h-3 rounded-full transition-all duration-300"
               style={{ 
                 width: `${progress}%`,
                 background: 'linear-gradient(135deg, #FF4081 0%, #E0007A 100%)'
               }}
             />
           </div>
-          <p className="text-sm mt-2" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081', fontSize: '1.125rem' }}>
+          <p className="text-xs sm:text-sm mt-2" style={{ fontFamily: 'Poppins, sans-serif', color: '#FF4081' }}>
             Question {currentQuestionIndex + 1} of 5
           </p>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6" style={{ backgroundColor: '#2D2D2D' }}>
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6" style={{ backgroundColor: '#2D2D2D' }}>
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#FF4081' }}></div>
+            <div className="flex items-center justify-center py-8 sm:py-12">
+              <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2" style={{ borderColor: '#FF4081' }}></div>
             </div>
           ) : (
             <>
               {questionType && (
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: '#1A1A1A', color: '#FF4081' }}>
+                <div className="mb-2 sm:mb-3 flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: '#1A1A1A', color: '#FF4081' }}>
                     Level {questionLevel}
                   </span>
-                  <span className="text-xs" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{questionType}</span>
+                  <span className="text-[10px] sm:text-xs" style={{ fontFamily: 'Poppins, sans-serif', color: '#F5D9E4' }}>{questionType}</span>
                 </div>
               )}
-              <h3 className="text-lg mb-4 px-4 py-3 rounded-lg" style={{ 
+              <h3 className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 px-3 sm:px-4 py-2 sm:py-3 rounded-lg" style={{ 
                 fontFamily: 'Poppins, sans-serif', 
                 color: '#FFFFFF', 
                 backgroundColor: '#1A1A1A', 
-                borderLeft: '4px solid #FF4081',
-                fontSize: '1.5rem'
+                borderLeft: '4px solid #FF4081'
               }}>
                 {currentQuestion}
               </h3>
               
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <textarea
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   placeholder="Type your answer here..."
-                  className="w-full h-32 p-4 rounded-lg resize-none transition-all duration-200"
+                  className="w-full h-24 sm:h-32 p-3 sm:p-4 text-sm sm:text-base rounded-lg resize-none transition-all duration-200"
                   style={{
                     fontFamily: 'Poppins, sans-serif',
                     color: '#F5D9E4',
@@ -283,18 +282,18 @@ export default function QuestionModal() {
         </div>
 
         {/* Footer */}
-        <div className="p-6 flex justify-between" style={{ borderTop: '1px solid #FF4081', backgroundColor: '#2D2D2D' }}>
+        <div className="p-3 sm:p-6 flex justify-between gap-3" style={{ borderTop: '1px solid #FF4081', backgroundColor: '#2D2D2D' }}>
           <button
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
-            className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-secondary text-sm sm:text-base px-3 sm:px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
           
           <button
             onClick={handleNext}
-            className="btn-primary"
+            className="btn-primary text-sm sm:text-base px-4 sm:px-6 py-2"
           >
             {currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next'}
           </button>

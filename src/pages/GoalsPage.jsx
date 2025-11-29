@@ -118,45 +118,45 @@ export default function GoalsPage() {
         onDismiss={dismissReminder} 
       />
       
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 p-3 sm:p-6 overflow-auto">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
-              <h1 className="text-4xl font-bold text-pink-400 mb-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-400 mb-1 sm:mb-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
                 🎯 Study Goals
               </h1>
-              <p className="text-gray-400">Set targets and track your learning progress</p>
+              <p className="text-gray-400 text-sm sm:text-base">Set targets and track your learning progress</p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="btn-primary px-6 py-3 flex items-center gap-2"
+              className="btn-primary px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <span className="text-xl">+</span>
+              <span className="text-lg sm:text-xl">+</span>
               New Goal
             </button>
           </div>
 
           {/* Overall Progress Card */}
-          <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl p-6 mb-8 border border-pink-500/30">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-pink-500/30">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
               <div className="text-center">
-                <div className="text-4xl font-bold text-pink-400">{activeGoals.length}</div>
-                <div className="text-gray-400 text-sm">Active Goals</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-400">{activeGoals.length}</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Active Goals</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-green-400">{completedGoals.length}</div>
-                <div className="text-gray-400 text-sm">Completed</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-400">{completedGoals.length}</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Completed</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-yellow-400">{totalProgress}%</div>
-                <div className="text-gray-400 text-sm">Avg Progress</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-yellow-400">{totalProgress}%</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Avg Progress</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-blue-400">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-400">
                   {sessions.filter(s => s.analysisComplete).length}
                 </div>
-                <div className="text-gray-400 text-sm">Total Sessions</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Total Sessions</div>
               </div>
             </div>
             

@@ -153,23 +153,23 @@ export default function HistoryPanel() {
 
   return (
     <div className="h-full flex flex-col" style={{ backgroundColor: '#1A1A1A' }}>
-      <div className="px-6 py-5 border-b border-pink-500/30 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-semibold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
+      <div className="px-3 sm:px-6 py-4 sm:py-5 border-b border-pink-500/30 flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <h2 className="text-xl sm:text-2xl font-semibold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
             Study History
           </h2>
-          <span className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-pink-100 bg-pink-500/20 border border-pink-500/40 rounded-full" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <span className="inline-flex items-center justify-center px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium text-pink-100 bg-pink-500/20 border border-pink-500/40 rounded-full" style={{ fontFamily: 'Poppins, sans-serif' }}>
             {sessionCount}
           </span>
         </div>
-        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+        <div className="flex flex-col gap-2 sm:gap-3 md:flex-row md:items-center">
           <div className="relative">
             <input
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by PDF or concept..."
-              className="w-full md:w-72 px-4 py-2 rounded-lg bg-pink-500/5 border border-pink-500/30 text-pink-100 placeholder-pink-200/50 focus:outline-none focus:ring-2 focus:ring-pink-400/60 transition-all"
+              placeholder="Search..."
+              className="w-full md:w-72 px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg bg-pink-500/5 border border-pink-500/30 text-pink-100 placeholder-pink-200/50 focus:outline-none focus:ring-2 focus:ring-pink-400/60 transition-all"
               style={{ fontFamily: 'Poppins, sans-serif' }}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-pink-300/60">
@@ -181,7 +181,7 @@ export default function HistoryPanel() {
           <select
             value={sortOrder}
             onChange={(event) => setSortOrder(event.target.value)}
-            className="px-4 py-2 rounded-lg bg-pink-500/5 border border-pink-500/30 text-pink-100 focus:outline-none focus:ring-2 focus:ring-pink-400/60 transition-all"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg bg-pink-500/5 border border-pink-500/30 text-pink-100 focus:outline-none focus:ring-2 focus:ring-pink-400/60 transition-all"
             style={{ fontFamily: 'Poppins, sans-serif' }}
           >
             {SORT_OPTIONS.map((option) => (
@@ -193,8 +193,8 @@ export default function HistoryPanel() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden p-6">
-        <div className="h-full w-full overflow-y-auto pr-1 space-y-4">
+      <div className="flex-1 overflow-hidden p-3 sm:p-6">
+        <div className="h-full w-full overflow-y-auto pr-1 space-y-3 sm:space-y-4">
           {filteredSessions.length === 0 ? (
             renderEmptyState()
           ) : (
@@ -206,36 +206,36 @@ export default function HistoryPanel() {
               return (
                 <div
                   key={session.id}
-                  className="border border-pink-500/30 bg-pink-500/5 rounded-2xl p-5 shadow-lg transition transform hover:-translate-y-1 hover:border-pink-400/60 hover:shadow-xl hover:bg-pink-500/10"
+                  className="border border-pink-500/30 bg-pink-500/5 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-lg transition transform hover:-translate-y-1 hover:border-pink-400/60 hover:shadow-xl hover:bg-pink-500/10"
                   style={{ fontFamily: 'Poppins, sans-serif', boxShadow: '0 10px 30px -15px rgba(255, 64, 129, 0.4)' }}
                 >
-                  <div className="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-start">
+                  <div className="flex flex-col gap-3 sm:gap-4">
                     <div className="flex-1">
-                      <div className="flex items-start gap-3 mb-3">
+                      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
                         <div className="flex-1 text-pink-100/90 leading-relaxed">
-                          <p className="text-sm md:text-base line-clamp-3">
+                          <p className="text-xs sm:text-sm md:text-base line-clamp-2 sm:line-clamp-3">
                             {session.fullSelectedText?.slice(0, 80) || session.selectedText?.slice(0, 80) || 'No excerpt saved.'}
                             {session.fullSelectedText?.length > 80 || session.selectedText?.length > 80 ? '…' : ''}
                           </p>
                         </div>
                         {session.pdfName && (
-                          <span className="px-3 py-1 rounded-full text-xs text-pink-200 bg-pink-500/10 border border-pink-500/40 uppercase tracking-wide whitespace-nowrap">
+                          <span className="self-start px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs text-pink-200 bg-pink-500/10 border border-pink-500/40 uppercase tracking-wide whitespace-nowrap">
                             {session.pdfName}
                           </span>
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-3 mb-4">
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${badgeClass}`}>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                        <span className={`px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold rounded-full ${badgeClass}`}>
                           {session.confusionType || 'Unknown'}
                         </span>
                         {mastery !== null && (
-                          <div className="flex-1 min-w-[180px]">
-                            <div className="flex items-center justify-between text-xs text-pink-200/70 mb-1">
-                              <span>Mastery Score</span>
+                          <div className="flex-1 min-w-[120px] sm:min-w-[180px]">
+                            <div className="flex items-center justify-between text-[10px] sm:text-xs text-pink-200/70 mb-1">
+                              <span>Mastery</span>
                               <span className="font-semibold text-pink-100">{mastery}%</span>
                             </div>
-                            <div className="h-2 rounded-full bg-pink-500/10 overflow-hidden">
+                            <div className="h-1.5 sm:h-2 rounded-full bg-pink-500/10 overflow-hidden">
                               <div
                                 className={`h-full rounded-full bg-gradient-to-r ${masteryBarColor(mastery)} transition-all duration-500`}
                                 style={{ width: `${mastery}%` }}
@@ -245,15 +245,15 @@ export default function HistoryPanel() {
                         )}
                       </div>
 
-                      <div className="text-xs text-pink-200/70 uppercase tracking-wide mb-4">
+                      <div className="text-[10px] sm:text-xs text-pink-200/70 uppercase tracking-wide mb-2 sm:mb-0">
                         {timeStats}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-end gap-2 sm:gap-3 pt-2 border-t border-pink-500/20 sm:border-0 sm:pt-0">
                       <button
                         onClick={() => handleReview(session.id)}
-                        className="px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md hover:shadow-lg hover:opacity-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md hover:shadow-lg hover:opacity-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={reviewMode}
                       >
                         Review
@@ -263,7 +263,7 @@ export default function HistoryPanel() {
                         className="p-2 text-pink-200/70 hover:text-pink-100 transition"
                         aria-label="Delete session"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 sm:w-5 sm:h-5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       </button>
