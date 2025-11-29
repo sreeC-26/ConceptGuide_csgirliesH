@@ -36,14 +36,15 @@ export default function GoalsPage() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Fetch goals and sessions when user logs in
+  // Fetch goals and sessions when user logs in or page mounts
   useEffect(() => {
     if (user?.uid) {
-      console.log('[GoalsPage] Fetching goals for user:', user.uid);
-      fetchGoals();
+      console.log('[GoalsPage] User logged in, fetching goals and sessions...');
+      // Force refresh goals from Firebase to ensure we have latest data
+      fetchGoals(true);
       syncSessionsFromFirebase();
     }
-  }, [user?.uid, fetchGoals, syncSessionsFromFirebase]);
+  }, [user?.uid]); // Removed fetchGoals and syncSessionsFromFirebase from deps to avoid infinite loops
 
   // Check reminders when goals or sessions change
   useEffect(() => {

@@ -5,13 +5,12 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
-  query,
-  orderBy,
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
 const getUserGoalsCollection = (userId) => {
   if (!userId) {
+    console.error('[GoalsService] No userId provided');
     throw new Error('User ID is required to access goals');
   }
   return collection(db, 'users', userId, 'goals');
@@ -36,35 +35,59 @@ export const GOAL_PERIODS = {
  * Create a new goal
  */
 export const createGoal = async (userId, goalData) => {
+  console.log('[GoalsService] Creating goal for user:', userId);
+  
   if (!goalData?.id) {
     throw new Error('Goal data must include an id');
   }
 
-  const goalsCollection = getUserGoalsCollection(userId);
-  const goalDocRef = doc(goalsCollection, goalData.id);
-  
-  const goal = {
-    ...goalData,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  
-  await setDoc(goalDocRef, goal);
-  return goal;
+  try {
+    const goalsCollection = getUserGoalsCollection(userId);
+    const goalDocRef = doc(goalsCollection, goalData.id);
+    
+    const goal = {
+      ...goalData,
+      createdAt: goalData.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    await setDoc(goalDocRef, goal);
+    console.log('[GoalsService] Goal created successfully:', goalData.id);
+    return goal;
+  } catch (error) {
+    console.error('[GoalsService] Error creating goal:', error);
+    throw error;
+  }
 };
 
 /**
  * Fetch all goals for a user
  */
 export const fetchUserGoals = async (userId) => {
-  const goalsCollection = getUserGoalsCollection(userId);
-  const q = query(goalsCollection, orderBy('createdAt', 'desc'));
-  const snapshot = await getDocs(q);
-
-  return snapshot.docs.map((docSnapshot) => ({
-    id: docSnapshot.id,
-    ...docSnapshot.data(),
-  }));
+  console.log('[GoalsService] Fetching goals for user:', userId);
+  
+  try {
+    const goalsCollection = getUserGoalsCollection(userId);
+    const snapshot = await getDocs(goalsCollection);
+    
+    const goals = snapshot.docs.map((docSnapshot) => ({
+      id: docSnapshot.id,
+      ...docSnapshot.data(),
+    }));
+    
+    // Sort by createdAt client-side (avoids needing Firestore index)
+    goals.sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0);
+      const dateB = new Date(b.createdAt || 0);
+      return dateB - dateA; // Most recent first
+    });
+    
+    console.log('[GoalsService] Fetched goals:', goals.length);
+    return goals;
+  } catch (error) {
+    console.error('[GoalsService] Error fetching goals:', error);
+    throw error;
+  }
 };
 
 /**

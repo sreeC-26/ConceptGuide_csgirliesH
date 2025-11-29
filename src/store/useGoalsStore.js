@@ -21,7 +21,7 @@ export const useGoalsStore = create((set, get) => ({
   error: null,
 
   // Fetch all goals from Firebase
-  fetchGoals: async () => {
+  fetchGoals: async (forceRefresh = false) => {
     const userId = useAuthStore.getState().user?.uid;
     if (!userId) {
       console.log('[GoalsStore] No user, clearing goals');
@@ -29,12 +29,24 @@ export const useGoalsStore = create((set, get) => ({
       return [];
     }
 
+    // If we have goals and not forcing refresh, skip fetch
+    const currentGoals = get().goals;
+    if (currentGoals.length > 0 && !forceRefresh) {
+      console.log('[GoalsStore] Goals already loaded, skipping fetch. Count:', currentGoals.length);
+      return currentGoals;
+    }
+
     set({ isLoading: true, error: null });
 
     try {
-      console.log('[GoalsStore] Fetching goals from Firebase...');
+      console.log('[GoalsStore] Fetching goals from Firebase for user:', userId);
       const goals = await fetchUserGoals(userId);
-      console.log('[GoalsStore] Fetched goals:', goals.length);
+      console.log('[GoalsStore] Fetched goals from Firebase:', goals.length);
+      
+      if (goals.length > 0) {
+        console.log('[GoalsStore] First goal:', goals[0].name);
+      }
+      
       set({ goals, isLoading: false });
       return goals;
     } catch (error) {
@@ -44,7 +56,7 @@ export const useGoalsStore = create((set, get) => ({
     }
   },
 
-  // Create a new goal - UPDATE LOCAL STATE FIRST (optimistic update)
+  // Create a new goal - Save to Firebase FIRST, then update local state
   addGoal: async (goalData) => {
     const userId = useAuthStore.getState().user?.uid;
     
@@ -64,28 +76,26 @@ export const useGoalsStore = create((set, get) => ({
 
     console.log('[GoalsStore] Creating goal:', newGoal);
 
-    // UPDATE LOCAL STATE IMMEDIATELY (optimistic update)
-    set((state) => {
-      console.log('[GoalsStore] Current goals count:', state.goals.length);
-      const updatedGoals = [newGoal, ...state.goals];
-      console.log('[GoalsStore] Updated goals count:', updatedGoals.length);
-      return { goals: updatedGoals };
-    });
-
-    // Then try to save to Firebase (if user is logged in)
+    // Save to Firebase FIRST if user is logged in
     if (userId) {
       try {
         await saveGoalToFirebase(userId, newGoal);
-        console.log('[GoalsStore] Goal saved to Firebase:', goalId);
+        console.log('[GoalsStore] Goal saved to Firebase successfully:', goalId);
       } catch (error) {
         console.error('[GoalsStore] Failed to save goal to Firebase:', error);
-        // Goal is still in local state, just not persisted
-        // You could rollback here if desired:
-        // set((state) => ({ goals: state.goals.filter(g => g.id !== goalId) }));
+        // Still add to local state so user sees it
       }
     } else {
-      console.log('[GoalsStore] No user logged in, goal saved locally only');
+      console.log('[GoalsStore] No user logged in, goal will be local only');
     }
+
+    // Then update local state
+    set((state) => {
+      console.log('[GoalsStore] Adding goal to local state. Current count:', state.goals.length);
+      const updatedGoals = [newGoal, ...state.goals];
+      console.log('[GoalsStore] New count:', updatedGoals.length);
+      return { goals: updatedGoals };
+    });
 
     return newGoal;
   },

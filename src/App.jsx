@@ -15,10 +15,11 @@ function App() {
 
   useEffect(() => {
     if (user?.uid) {
+      console.log('[App] User logged in, syncing data from Firebase...')
       syncSessionsFromFirebase()
-      fetchGoals()
+      fetchGoals(true) // Force refresh from Firebase
     }
-  }, [user?.uid, syncSessionsFromFirebase, fetchGoals])
+  }, [user?.uid]) // Removed function refs to avoid potential issues
 
   return (
     <Routes>
