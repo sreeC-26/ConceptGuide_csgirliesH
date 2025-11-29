@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { useAuthStore } from './useAuthStore';
 import {
-  createGoal,
+  createGoal as saveGoalToFirebase,
   fetchUserGoals,
-  updateGoal,
-  deleteGoal,
+  updateGoal as updateGoalInFirebase,
+  deleteGoal as deleteGoalFromFirebase,
   calculateGoalProgress,
   shouldShowReminder,
   getReminderMessage,
@@ -24,6 +24,7 @@ export const useGoalsStore = create((set, get) => ({
   fetchGoals: async () => {
     const userId = useAuthStore.getState().user?.uid;
     if (!userId) {
+      console.log('[GoalsStore] No user, clearing goals');
       set({ goals: [], isLoading: false });
       return [];
     }
@@ -31,7 +32,9 @@ export const useGoalsStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
+      console.log('[GoalsStore] Fetching goals from Firebase...');
       const goals = await fetchUserGoals(userId);
+      console.log('[GoalsStore] Fetched goals:', goals.length);
       set({ goals, isLoading: false });
       return goals;
     } catch (error) {
@@ -41,14 +44,10 @@ export const useGoalsStore = create((set, get) => ({
     }
   },
 
-  // Create a new goal
+  // Create a new goal - UPDATE LOCAL STATE FIRST (optimistic update)
   addGoal: async (goalData) => {
     const userId = useAuthStore.getState().user?.uid;
-    if (!userId) {
-      console.error('[GoalsStore] Cannot create goal: No user logged in');
-      return null;
-    }
-
+    
     const goalId = `goal-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const newGoal = {
       id: goalId,
@@ -60,55 +59,78 @@ export const useGoalsStore = create((set, get) => ({
       isActive: true,
       reminderEnabled: goalData.reminderEnabled !== false,
       reminderTime: goalData.reminderTime || '09:00',
+      createdAt: new Date().toISOString(),
     };
 
-    try {
-      await createGoal(userId, newGoal);
-      set((state) => ({
-        goals: [newGoal, ...state.goals],
-      }));
-      console.log('[GoalsStore] Goal created:', goalId);
-      return newGoal;
-    } catch (error) {
-      console.error('[GoalsStore] Failed to create goal:', error);
-      set({ error: error.message });
-      return null;
+    console.log('[GoalsStore] Creating goal:', newGoal);
+
+    // UPDATE LOCAL STATE IMMEDIATELY (optimistic update)
+    set((state) => {
+      console.log('[GoalsStore] Current goals count:', state.goals.length);
+      const updatedGoals = [newGoal, ...state.goals];
+      console.log('[GoalsStore] Updated goals count:', updatedGoals.length);
+      return { goals: updatedGoals };
+    });
+
+    // Then try to save to Firebase (if user is logged in)
+    if (userId) {
+      try {
+        await saveGoalToFirebase(userId, newGoal);
+        console.log('[GoalsStore] Goal saved to Firebase:', goalId);
+      } catch (error) {
+        console.error('[GoalsStore] Failed to save goal to Firebase:', error);
+        // Goal is still in local state, just not persisted
+        // You could rollback here if desired:
+        // set((state) => ({ goals: state.goals.filter(g => g.id !== goalId) }));
+      }
+    } else {
+      console.log('[GoalsStore] No user logged in, goal saved locally only');
     }
+
+    return newGoal;
   },
 
   // Update an existing goal
   updateGoal: async (goalId, updates) => {
     const userId = useAuthStore.getState().user?.uid;
-    if (!userId) return;
 
-    try {
-      await updateGoal(userId, goalId, updates);
-      set((state) => ({
-        goals: state.goals.map((g) =>
-          g.id === goalId ? { ...g, ...updates } : g
-        ),
-      }));
-      console.log('[GoalsStore] Goal updated:', goalId);
-    } catch (error) {
-      console.error('[GoalsStore] Failed to update goal:', error);
-      set({ error: error.message });
+    // Update local state first
+    set((state) => ({
+      goals: state.goals.map((g) =>
+        g.id === goalId ? { ...g, ...updates, updatedAt: new Date().toISOString() } : g
+      ),
+    }));
+    console.log('[GoalsStore] Goal updated locally:', goalId);
+
+    // Then sync to Firebase
+    if (userId) {
+      try {
+        await updateGoalInFirebase(userId, goalId, updates);
+        console.log('[GoalsStore] Goal synced to Firebase:', goalId);
+      } catch (error) {
+        console.error('[GoalsStore] Failed to sync goal to Firebase:', error);
+      }
     }
   },
 
   // Delete a goal
   removeGoal: async (goalId) => {
     const userId = useAuthStore.getState().user?.uid;
-    if (!userId) return;
 
-    try {
-      await deleteGoal(userId, goalId);
-      set((state) => ({
-        goals: state.goals.filter((g) => g.id !== goalId),
-      }));
-      console.log('[GoalsStore] Goal deleted:', goalId);
-    } catch (error) {
-      console.error('[GoalsStore] Failed to delete goal:', error);
-      set({ error: error.message });
+    // Remove from local state first
+    set((state) => ({
+      goals: state.goals.filter((g) => g.id !== goalId),
+    }));
+    console.log('[GoalsStore] Goal removed locally:', goalId);
+
+    // Then delete from Firebase
+    if (userId) {
+      try {
+        await deleteGoalFromFirebase(userId, goalId);
+        console.log('[GoalsStore] Goal deleted from Firebase:', goalId);
+      } catch (error) {
+        console.error('[GoalsStore] Failed to delete goal from Firebase:', error);
+      }
     }
   },
 
@@ -120,15 +142,13 @@ export const useGoalsStore = create((set, get) => ({
     }
   },
 
-  // Get progress for all active goals
+  // Get progress for all active goals (helper - but prefer computing in component)
   getGoalsWithProgress: (sessions) => {
     const { goals } = get();
-    return goals
-      .filter((g) => g.isActive)
-      .map((goal) => ({
-        ...goal,
-        progress: calculateGoalProgress(goal, sessions),
-      }));
+    return goals.map((goal) => ({
+      ...goal,
+      progress: calculateGoalProgress(goal, sessions),
+    }));
   },
 
   // Check and update reminders
@@ -180,4 +200,3 @@ export const useGoalsStore = create((set, get) => ({
     });
   },
 }));
-

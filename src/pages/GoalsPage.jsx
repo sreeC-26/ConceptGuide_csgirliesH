@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGoalsStore, GOAL_TYPES, GOAL_PERIODS } from '../store/useGoalsStore';
 import { useAppStore } from '../store/useAppStore';
 import { useAuthStore } from '../store/useAuthStore';
+import { calculateGoalProgress } from '../services/goalsService';
 import TopNavBar from '../components/TopNavBar';
 import GoalCard from '../components/GoalCard';
 import CreateGoalModal from '../components/CreateGoalModal';
@@ -17,18 +18,16 @@ export default function GoalsPage() {
   const sessions = useAppStore((state) => state.history?.sessions) || [];
   const syncSessionsFromFirebase = useAppStore((state) => state.syncSessionsFromFirebase);
   
-  const { 
-    goals, 
-    fetchGoals, 
-    addGoal, 
-    removeGoal, 
-    toggleGoalActive,
-    getGoalsWithProgress,
-    activeReminders,
-    checkReminders,
-    dismissReminder,
-    isLoading 
-  } = useGoalsStore();
+  // Subscribe to goals directly for reactivity
+  const goals = useGoalsStore((state) => state.goals);
+  const activeReminders = useGoalsStore((state) => state.activeReminders);
+  const isLoading = useGoalsStore((state) => state.isLoading);
+  const fetchGoals = useGoalsStore((state) => state.fetchGoals);
+  const addGoal = useGoalsStore((state) => state.addGoal);
+  const removeGoal = useGoalsStore((state) => state.removeGoal);
+  const toggleGoalActive = useGoalsStore((state) => state.toggleGoalActive);
+  const checkReminders = useGoalsStore((state) => state.checkReminders);
+  const dismissReminder = useGoalsStore((state) => state.dismissReminder);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 1024px)');
@@ -40,6 +39,7 @@ export default function GoalsPage() {
   // Fetch goals and sessions when user logs in
   useEffect(() => {
     if (user?.uid) {
+      console.log('[GoalsPage] Fetching goals for user:', user.uid);
       fetchGoals();
       syncSessionsFromFirebase();
     }
@@ -47,22 +47,42 @@ export default function GoalsPage() {
 
   // Check reminders when goals or sessions change
   useEffect(() => {
-    if (goals.length > 0 && sessions.length >= 0) {
+    if (goals.length > 0) {
       checkReminders(sessions);
     }
   }, [goals, sessions, checkReminders]);
 
-  const goalsWithProgress = getGoalsWithProgress(sessions);
+  // Compute goals with progress - memoized for performance
+  const goalsWithProgress = useMemo(() => {
+    console.log('[GoalsPage] Computing goals with progress, goals count:', goals.length);
+    return goals.map((goal) => ({
+      ...goal,
+      progress: calculateGoalProgress(goal, sessions),
+    }));
+  }, [goals, sessions]);
+
+  // Calculate overall stats from ALL goals (not just active)
+  const activeGoals = useMemo(() => 
+    goalsWithProgress.filter(g => g.isActive), 
+    [goalsWithProgress]
+  );
   
-  // Calculate overall stats
-  const activeGoals = goalsWithProgress.filter(g => g.isActive);
-  const completedGoals = activeGoals.filter(g => g.progress?.isCompleted);
-  const totalProgress = activeGoals.length > 0
-    ? Math.round(activeGoals.reduce((sum, g) => sum + (g.progress?.percentage || 0), 0) / activeGoals.length)
-    : 0;
+  const completedGoals = useMemo(() => 
+    activeGoals.filter(g => g.progress?.isCompleted),
+    [activeGoals]
+  );
+  
+  const totalProgress = useMemo(() => 
+    activeGoals.length > 0
+      ? Math.round(activeGoals.reduce((sum, g) => sum + (g.progress?.percentage || 0), 0) / activeGoals.length)
+      : 0,
+    [activeGoals]
+  );
 
   const handleCreateGoal = async (goalData) => {
-    await addGoal(goalData);
+    console.log('[GoalsPage] Creating goal:', goalData);
+    const result = await addGoal(goalData);
+    console.log('[GoalsPage] Goal created result:', result);
     setShowCreateModal(false);
   };
 
@@ -159,7 +179,7 @@ export default function GoalsPage() {
             </div>
           </div>
 
-          {/* Goals Grid */}
+          {/* Goals Grid - Show ALL goals, not just active ones */}
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-400"></div>
@@ -220,4 +240,3 @@ export default function GoalsPage() {
     </div>
   );
 }
-
